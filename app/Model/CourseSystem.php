@@ -1,0 +1,3 @@
+class CourseSystem extends AppModel{
+	
+}

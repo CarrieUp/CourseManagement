@@ -1,0 +1,83 @@
+<?php
+class ProfessorsController extends AppController{
+	public $helpers = array('Html','Form');
+	//select the courses list according to professor id in course table
+	public function index($id){
+		$this->loadModel('Course');
+		$course=$this->Course->findAllByProfessorId($id);
+		$this->set('course',$course);	
+	}
+	public function courseInfo(){
+		$this->loadModel('Professor');
+		$this->set('professors', $this->Professor->find('all'));
+		
+	}
+	public function gradeInfo(){
+		$this->loadModel('Student');
+		$this->set('students',$this->Student->find('all'));
+	}
+	public function viewCourse($id=null){
+		$this->loadModel('Professor');
+		$professor=$this->Professor->findById($id);
+		$this->set('professors',$professor);
+	}
+	public function viewGrade($id=null){
+		$this->loadModel('Student');
+		$student=$this->Student->findById($id);
+		$this->set('students',$student);
+	}
+	public function deleteCourse($id){
+		$this->loadModel('Professor');
+		if($this->request->is('get')){
+			throw new MethodNotAllowedException();
+		}
+		if($this->Professor->delete($id)){
+			$this->Flash->success(
+				__('This user with id: %s has been deleted.',h($id) )
+			);
+		}
+		else{
+			$this->Flash->error(
+				__('This user with id: %s could not be deleted.',h($id))
+			);
+		}
+	return $this->redirect(array('action'=>'proInfo'));
+	}
+	public function addCourse(){
+		$this->loadModel('Professor');
+		if($this->request->is('post')){
+			$this->Professor->create();
+		if($this->Professor->save($this->request->data)){
+			$this->Flash->success(__('You have added a user.'));
+			return $this->redirect(array( 'controller'=>'administrators','action'=>'proInfo'));
+		}
+		$this->Flash->error(__('Unable to add this user.'));
+		}
+	}
+	public function updateCourse($id=null){
+		$this->loadModel('Professor');
+		if(!$id){
+			throw new NotFoundException(__('Invalid professor user'));
+		}
+		$professor = $this->Professor->findById($id);
+		if(!$professor){
+			throw new NotFoundException(__('Invalid professor user'));
+		}
+		if($this->request->is(array('professor','put'))){
+			$this->Professor->id = $id;
+			if($this->Professor->save($this->request->data)){
+				$this->Flash->success(__('Your user information has been updated'));
+				return $this->redirect(array('action'=>'proInfo'));
+			}
+		$this->Flash->error(__('Unable to update this user.'));
+		}
+		if(!$this->request->data){
+			$this->request->data = $professor;
+		}
+	}
+	public function updateGrade($id=null){
+		
+	}	
+
+
+}

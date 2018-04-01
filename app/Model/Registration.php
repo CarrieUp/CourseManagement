@@ -1,0 +1,3 @@
+Class registration extends AppModel{
+
+}
